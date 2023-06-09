@@ -1,0 +1,13 @@
+type: update
+name: test
+baseUrl: https://raw.githubusercontent.com/sych74/wp-perf-addon/main
+onInstall:
+  cmd[${nodes.cp.master.id}]: |-
+    wget ${baseUrl}/usermeta.sql -O /tmp/usermeta.sql;
+    wget ${baseUrl}/users.sql -O /tmp/users.sql;
+    wget http://wordpresshostingbenchmarks.reviewsignal.com/rswphpb.xml -O /tmp/rswphpb.xml;
+    wp plugin install wordpress-importer --activate --path=/var/www/webroot/ROOT;
+    wp import --authors=skip /tmp/rswphpb.xml --path=/var/www/webroot/ROOT;
+    wp db import /tmp/usermeta.sql --path=/var/www/webroot/ROOT;
+    wp db import /tmp/users.sql --path=/var/www/webroot/ROOT;
+    wp cache flush --path=/var/www/webroot/ROOT;
